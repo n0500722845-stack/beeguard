@@ -1,0 +1,1 @@
+BeeGuard cloud-ready PWA. Connected to Supabase BeeGuard project. Live database mode requires Supabase Auth login. Demo mode works immediately. Deploy these files to any HTTPS static host; then add that site URL to Supabase Auth redirect URLs.
