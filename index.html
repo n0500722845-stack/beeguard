@@ -2,60 +2,268 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1712">
-<link rel="manifest" href="manifest.json">
-<title>BeeGuard</title>
+<title>BeeMind AI | المتابعة الحية</title>
 <style>
-body{margin:0;font-family:system-ui;background:#0f1712;color:#fff}.app{max-width:520px;margin:auto;padding:18px 16px 90px}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:30px;font-weight:800;color:#f2bd45}.muted{color:#9fb0a5}.panel,.card{background:#17241c;border:1px solid #2d4535;border-radius:20px;padding:16px;margin:12px 0}.score{text-align:center}.score b{display:block;font-size:60px;color:#f2bd45}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{margin:0}.card strong{display:block;font-size:23px;margin-top:6px}.ok{color:#72df98}.danger{color:#ff7676}.btn{width:100%;border:0;border-radius:14px;padding:13px;background:#f2bd45;font-weight:800;margin-top:10px}.secondary{background:#23362a;color:#fff;border:1px solid #2d4535}input{width:100%;padding:13px;border-radius:12px;border:1px solid #2d4535;background:#101a14;color:#fff;box-sizing:border-box}.hide{display:none}.status{font-size:13px;color:#9fb0a5;margin-top:8px}.event{padding:10px 0;border-bottom:1px solid #2d4535}
+:root{
+  --bg:#0f1712;--panel:#17241c;--panel2:#101a14;--line:#2d4535;
+  --gold:#f2bd45;--text:#fff;--muted:#9fb0a5;--ok:#72df98;--danger:#ff7676;--warn:#ffd26a;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:760px;margin:auto;padding:18px 16px 90px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
+.brand{font-size:30px;font-weight:900;color:var(--gold)}
+.subtitle,.muted{color:var(--muted)}
+.badge{background:#22362a;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:13px;white-space:nowrap}
+.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{margin:0;min-height:105px}
+.card small{color:var(--muted)}
+.card strong{display:block;font-size:21px;margin-top:7px;word-break:break-word}
+.card .mini{font-size:12px;color:var(--muted);margin-top:6px}
+.hero{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.hero .statusTitle{font-size:24px;font-weight:900}
+.ok{color:var(--ok)}.danger{color:var(--danger)}.warn{color:var(--warn)}
+.btn{width:100%;border:0;border-radius:14px;padding:13px;background:var(--gold);font-weight:900;margin-top:10px;cursor:pointer}
+.secondary{background:#23362a;color:#fff;border:1px solid var(--line)}
+input{width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:#fff}
+.hide{display:none}.status{font-size:13px;color:var(--muted);margin-top:8px}
+.event{padding:12px 0;border-bottom:1px solid var(--line)}
+.event:last-child{border-bottom:0}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.sep{height:1px;background:var(--line);margin:12px 0}
+a{color:var(--gold)}
+.liveDot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ok);margin-left:6px}
+.offlineDot{background:var(--danger)}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="top"><div><div class="brand">BeeGuard</div><div class="muted">مراقبة وحماية خلية النحل</div></div><strong>BG-001</strong></div>
+  <div class="top">
+    <div>
+      <div class="brand">BeeMind AI</div>
+      <div class="subtitle">إدارة ذكية ومتابعة حية للمنحل</div>
+    </div>
+    <div class="badge">BM-001</div>
+  </div>
 
-<div id="login" class="panel">
-<h3>الدخول إلى BeeGuard</h3>
-<p class="muted">أدخل بريدك وسيصل رابط دخول آمن. أو شغّل وضع المحاكاة مباشرة.</p>
-<input id="email" type="email" placeholder="البريد الإلكتروني">
-<button class="btn" onclick="magic()">إرسال رابط الدخول</button>
-<button class="btn secondary" onclick="demo()">عرض المحاكاة الآن</button>
-<div id="msg" class="status"></div>
-</div>
+  <div id="login" class="panel">
+    <h3>الدخول إلى BeeMind AI</h3>
+    <p class="muted">أدخل البريد الإلكتروني المرتبط بالنظام وسيصلك رابط دخول آمن</p>
+    <input id="email" type="email" placeholder="البريد الإلكتروني">
+    <button class="btn" id="loginBtn">إرسال رابط الدخول</button>
+    <div id="msg" class="status"></div>
+  </div>
 
-<div id="dash" class="hide">
-<div class="panel score"><span class="muted">BeeGuard Score</span><b id="score">--</b><div id="state">جاري التحميل...</div></div>
-<div class="grid">
-<div class="card"><small class="muted">الوزن</small><strong id="w">--</strong></div>
-<div class="card"><small class="muted">الحرارة</small><strong id="t">--</strong></div>
-<div class="card"><small class="muted">الرطوبة</small><strong id="h">--</strong></div>
-<div class="card"><small class="muted">البطارية</small><strong id="b">--</strong></div>
-<div class="card"><small class="muted">النشاط الصوتي</small><strong id="s">--</strong></div>
-<div class="card"><small class="muted">الشبكة</small><strong id="n">--</strong></div>
-</div>
-<div class="panel"><strong id="source">المصدر: —</strong><div id="last" class="status"></div><button class="btn secondary" onclick="load()">تحديث الآن</button></div>
-<div class="panel"><h3>آخر التنبيهات</h3><div id="events">—</div></div>
-</div>
+  <div id="dash" class="hide">
+    <div class="panel hero">
+      <div>
+        <div id="liveState" class="statusTitle">جاري التحميل</div>
+        <div id="lastSeen" class="status">—</div>
+      </div>
+      <div class="badge"><span id="liveDot" class="liveDot"></span><span id="liveText">حالة الجهاز</span></div>
+    </div>
+
+    <div class="grid">
+      <div class="card"><small>الشبكة</small><strong id="network">—</strong><div class="mini" id="signal">—</div></div>
+      <div class="card"><small>GPS</small><strong id="gps">—</strong><div class="mini" id="alt">—</div></div>
+      <div class="card"><small>Firmware</small><strong id="fw">—</strong><div class="mini" id="deviceId">—</div></div>
+      <div class="card"><small>الوزن</small><strong id="weight">غير مركب</strong></div>
+      <div class="card"><small>حرارة الخلية</small><strong id="tempIn">غير مركب</strong></div>
+      <div class="card"><small>رطوبة الخلية</small><strong id="humIn">غير مركب</strong></div>
+      <div class="card"><small>البطارية</small><strong id="battery">غير متاح</strong></div>
+      <div class="card"><small>الصوت</small><strong id="sound">غير مركب</strong></div>
+      <div class="card"><small>الحركة</small><strong id="motion">—</strong></div>
+    </div>
+
+    <div class="panel">
+      <div class="row"><h3 style="margin:0">BeeWeather AI</h3><span class="badge">بيانات حقيقية</span></div>
+      <div class="grid" style="margin-top:12px">
+        <div class="card"><small>الحرارة الخارجية</small><strong id="wTemp">—</strong></div>
+        <div class="card"><small>الرطوبة</small><strong id="wHum">—</strong></div>
+        <div class="card"><small>الضغط</small><strong id="wPressure">—</strong></div>
+        <div class="card"><small>الرياح</small><strong id="wWind">—</strong></div>
+        <div class="card"><small>المطر</small><strong id="wRain">—</strong></div>
+        <div class="card"><small>الوصف</small><strong id="wDesc">—</strong></div>
+      </div>
+      <div id="weatherTime" class="status"></div>
+    </div>
+
+    <div class="panel">
+      <h3>الموقع والحماية</h3>
+      <div id="coords">—</div>
+      <div id="geofence" class="status">—</div>
+      <button class="btn secondary" id="mapBtn">فتح الموقع على الخريطة</button>
+    </div>
+
+    <div class="panel">
+      <h3>آخر التنبيهات</h3>
+      <div id="events">لا توجد تنبيهات</div>
+    </div>
+
+    <div class="panel">
+      <strong>المصدر: الجهاز الحقيقي فقط</strong>
+      <div id="lastTelemetry" class="status">—</div>
+      <button class="btn secondary" id="refreshBtn">تحديث الآن</button>
+      <button class="btn secondary" id="logoutBtn">تسجيل الخروج</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-const supabase=createClient('https://jlmkohjnpxpidpxfbbov.supabase.co','sb_publishable_riIjdtRfhTkNafyp_425Vw_88Bmx9TW');
-let demoMode=false;
-window.magic=async()=>{const email=document.getElementById('email').value.trim();if(!email)return msg.textContent='أدخل البريد الإلكتروني.';const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});msg.textContent=error?error.message:'تم إرسال رابط الدخول إلى بريدك.'}
-window.demo=()=>{demoMode=true;start();};
-function start(){login.classList.add('hide');dash.classList.remove('hide');load();setInterval(load,30000);}
-window.load=async()=>{
- if(demoMode){const k=Date.now()/60000;render({recorded_at:new Date().toISOString(),weight_kg:(27.6+Math.sin(k/5)*.35).toFixed(2),temperature_c:(34.2+Math.sin(k/7)*.8).toFixed(1),humidity_pct:(60+Math.cos(k/6)*3).toFixed(0),battery_pct:86,sound_score:(72+Math.sin(k/3)*6).toFixed(0),network:'4G',beeguard_score:(92+Math.sin(k/8)*2).toFixed(0),source:'simulation'},'normal');events.innerHTML='<div class="event"><strong>حركة خفيفة - اختبار</strong><div class="status">حدث محاكاة</div></div>';return;}
- const {data:hive,error:e1}=await supabase.from('hives').select('id,hive_code,name,status').eq('hive_code','BG-001').single();if(e1)return fail(e1.message);
- const {data:d,error:e2}=await supabase.from('telemetry').select('recorded_at,weight_kg,temperature_c,humidity_pct,battery_pct,sound_score,network,beeguard_score,source').eq('hive_id',hive.id).order('recorded_at',{ascending:false}).limit(1).single();if(e2)return fail(e2.message);
- render(d,hive.status);
- const {data:ev}=await supabase.from('events').select('created_at,title,details').eq('hive_id',hive.id).order('created_at',{ascending:false}).limit(5);
- events.innerHTML=ev?.length?ev.map(x=>`<div class="event"><strong>${x.title}</strong><div class="status">${new Date(x.created_at).toLocaleString('ar-SA')}</div><div>${x.details||''}</div></div>`).join(''):'لا توجد تنبيهات.';
+
+const SUPABASE_URL = 'https://jlmkohjnpxpidpxfbbov.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_riIjdtRfhTkNafyp_425Vw_88Bmx9TW';
+const HIVE_CODE = 'BM-001';
+const DEVICE_UID = 'BEEMIND-ESP32S3-001';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = (id) => document.getElementById(id);
+const fmt = (v, unit='') => (v === null || v === undefined || v === '') ? '—' : `${v}${unit}`;
+const timeAR = (v) => v ? new Date(v).toLocaleString('ar-SA') : '—';
+
+async function magic(){
+  const email = $('email').value.trim();
+  if(!email){ $('msg').textContent='أدخل البريد الإلكتروني'; return; }
+  $('msg').textContent='جاري الإرسال...';
+  const {error}=await supabase.auth.signInWithOtp({
+    email,
+    options:{ emailRedirectTo: location.origin + location.pathname }
+  });
+  $('msg').textContent = error ? `تعذر الإرسال: ${error.message}` : 'تم إرسال رابط الدخول إلى بريدك';
 }
-function render(d,status){score.textContent=Math.round(Number(d.beeguard_score||0));state.textContent=status==='normal'?'الحالة العامة: طبيعية':'الحالة: '+status;state.className=status==='normal'?'ok':'danger';w.textContent=(d.weight_kg||'--')+' كجم';t.textContent=(d.temperature_c||'--')+'°C';h.textContent=(d.humidity_pct||'--')+'%';b.textContent=(d.battery_pct||'--')+'%';s.textContent=(d.sound_score||'--')+'/100';n.textContent=d.network||'—';source.textContent='المصدر: '+(d.source==='device'?'الجهاز الحقيقي':'محاكاة تجريبية');last.textContent='آخر قراءة: '+new Date(d.recorded_at).toLocaleString('ar-SA');}
-function fail(x){state.textContent='تعذر جلب البيانات';state.className='danger';last.textContent=x}
-const {data:{session}}=await supabase.auth.getSession();if(session)start();supabase.auth.onAuthStateChange((_e,s)=>{if(s&&!demoMode)start();});
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
+
+function setSensor(id, value, unit, notInstalled='غير مركب'){
+  $(id).textContent = (value === null || value === undefined) ? notInstalled : `${value}${unit||''}`;
+}
+
+async function load(){
+  $('liveState').textContent='جاري تحديث البيانات...';
+
+  const {data:hive,error:hiveErr}=await supabase
+    .from('hives')
+    .select('id,hive_code,name,status,latitude,longitude,geofence_radius_m')
+    .eq('hive_code',HIVE_CODE)
+    .single();
+
+  if(hiveErr){ return fail(`تعذر قراءة الخلية: ${hiveErr.message}`); }
+
+  const [telemetryRes, deviceRes, weatherRes, eventsRes] = await Promise.all([
+    supabase.from('telemetry')
+      .select('recorded_at,weight_kg,temperature_c,humidity_pct,battery_pct,sound_score,motion,tilt_deg,latitude,longitude,network,source,gps_altitude_m,gps_speed_kmh,gps_fix,signal_csq,firmware_version')
+      .eq('hive_id',hive.id).eq('source','device')
+      .order('recorded_at',{ascending:false}).limit(1).maybeSingle(),
+
+    supabase.from('devices')
+      .select('device_uid,enabled,last_seen_at,firmware_version')
+      .eq('hive_id',hive.id).eq('device_uid',DEVICE_UID)
+      .maybeSingle(),
+
+    supabase.from('weather_observations')
+      .select('observed_at,fetched_at,temperature_c,humidity_pct,pressure_hpa,wind_speed_kmh,wind_direction_deg,precipitation_probability_pct,precipitation_mm,weather_description,data_kind,provider')
+      .eq('hive_id',hive.id)
+      .order('observed_at',{ascending:false}).limit(1).maybeSingle(),
+
+    supabase.from('events')
+      .select('created_at,title,details,severity')
+      .eq('hive_id',hive.id)
+      .order('created_at',{ascending:false}).limit(5)
+  ]);
+
+  if(telemetryRes.error){ return fail(`تعذر قراءة Telemetry: ${telemetryRes.error.message}`); }
+
+  const d = telemetryRes.data;
+  const dev = deviceRes.data;
+  const w = weatherRes.data;
+
+  if(!d){ return fail('لا توجد قراءة حقيقية للجهاز حتى الآن'); }
+
+  const ageMinutes = Math.max(0, (Date.now() - new Date(d.recorded_at).getTime()) / 60000);
+  const online = ageMinutes <= 15;
+
+  $('liveState').textContent = online ? 'الجهاز متصل ويُرسل البيانات' : 'آخر قراءة قديمة';
+  $('liveState').className = 'statusTitle ' + (online ? 'ok' : 'warn');
+  $('liveDot').className = 'liveDot' + (online ? '' : ' offlineDot');
+  $('liveText').textContent = online ? 'متصل' : 'غير متصل حاليًا';
+  $('lastSeen').textContent = `آخر اتصال: ${timeAR(dev?.last_seen_at || d.recorded_at)}`;
+
+  $('network').textContent = d.network || '—';
+  $('signal').textContent = d.signal_csq !== null && d.signal_csq !== undefined ? `CSQ ${d.signal_csq}` : 'قوة الإشارة غير متاحة';
+  $('gps').textContent = d.gps_fix ? 'مثبت' : 'غير مثبت';
+  $('alt').textContent = d.gps_altitude_m !== null ? `الارتفاع ${d.gps_altitude_m} م` : 'الارتفاع غير متاح';
+  $('fw').textContent = d.firmware_version || dev?.firmware_version || '—';
+  $('deviceId').textContent = dev?.device_uid || DEVICE_UID;
+
+  setSensor('weight', d.weight_kg, ' كجم');
+  setSensor('tempIn', d.temperature_c, '°C');
+  setSensor('humIn', d.humidity_pct, '%');
+  setSensor('battery', d.battery_pct, '%', 'غير متاح');
+  setSensor('sound', d.sound_score, '', 'غير مركب');
+  $('motion').textContent = d.motion === true ? 'تم رصد حركة' : d.motion === false ? 'لا توجد حركة' : '—';
+
+  const lat = d.latitude ?? hive.latitude;
+  const lon = d.longitude ?? hive.longitude;
+  $('coords').textContent = (lat !== null && lon !== null) ? `${Number(lat).toFixed(6)} ، ${Number(lon).toFixed(6)}` : 'الموقع غير متاح';
+  $('geofence').textContent = `Geofence: ${hive.geofence_radius_m ?? 100} متر`;
+  $('mapBtn').onclick = () => {
+    if(lat !== null && lon !== null) window.open(`https://www.google.com/maps?q=${lat},${lon}`,'_blank');
+  };
+
+  if(w){
+    $('wTemp').textContent = fmt(w.temperature_c,'°C');
+    $('wHum').textContent = fmt(w.humidity_pct,'%');
+    $('wPressure').textContent = fmt(w.pressure_hpa,' hPa');
+    $('wWind').textContent = fmt(w.wind_speed_kmh,' كم/س');
+    $('wRain').textContent = w.precipitation_mm !== null && w.precipitation_mm !== undefined
+      ? `${w.precipitation_mm} مم`
+      : (w.precipitation_probability_pct !== null && w.precipitation_probability_pct !== undefined ? `${w.precipitation_probability_pct}%` : '—');
+    $('wDesc').textContent = w.weather_description || '—';
+    $('weatherTime').textContent = `آخر تحديث للطقس: ${timeAR(w.fetched_at || w.observed_at)}${w.provider ? ` • ${w.provider}` : ''}`;
+  }else{
+    ['wTemp','wHum','wPressure','wWind','wRain','wDesc'].forEach(x => $(x).textContent='—');
+    $('weatherTime').textContent='لا توجد بيانات طقس متاحة';
+  }
+
+  const ev = eventsRes.data || [];
+  $('events').innerHTML = ev.length ? ev.map(x =>
+    `<div class="event"><strong>${escapeHtml(x.title||'تنبيه')}</strong><div class="status">${timeAR(x.created_at)} • ${escapeHtml(x.severity||'info')}</div><div>${escapeHtml(x.details||'')}</div></div>`
+  ).join('') : 'لا توجد تنبيهات مسجلة';
+
+  $('lastTelemetry').textContent = `آخر قراءة حقيقية: ${timeAR(d.recorded_at)}`;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+function fail(message){
+  $('liveState').textContent='تعذر جلب البيانات';
+  $('liveState').className='statusTitle danger';
+  $('lastSeen').textContent=message;
+}
+
+function start(){
+  $('login').classList.add('hide');
+  $('dash').classList.remove('hide');
+  load();
+  setInterval(load,30000);
+}
+
+$('loginBtn').addEventListener('click', magic);
+$('refreshBtn').addEventListener('click', load);
+$('logoutBtn').addEventListener('click', async()=>{ await supabase.auth.signOut(); location.reload(); });
+
+const {data:{session}} = await supabase.auth.getSession();
+if(session) start();
+
+supabase.auth.onAuthStateChange((_event, session)=>{
+  if(session) start();
+});
 </script>
-</body></html>
+</body>
+</html>
